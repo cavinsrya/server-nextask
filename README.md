@@ -1,4 +1,4 @@
-# NextTask - Fullstack Task Management System 🚀
+# NextTask - Task Management System 🚀
 
 **NextTask** adalah aplikasi manajemen tugas. Proyek ini dibangun sebagai solusi *full-stack* yang memisahkan tanggung jawab antara *Frontend* dan *Backend* secara tegas untuk menjaga skalabilitas dan kebersihan kode.
 
@@ -6,7 +6,7 @@
 - **Frontend:** [https://client-nextask.vercel.app](https://client-nextask.vercel.app)
 - **Backend API:** [https://server-nextask-production.up.railway.app](https://server-nextask-production.up.railway.app)
 
-- **Login:**
+**Login:**
 - Email: kevin@gmail.com
 - Password: kevin1234
 ---
@@ -19,6 +19,7 @@
 | **Database** | PostgreSQL (Supabase) |
 | **ORM** | Prisma |
 | **Security** | JWT, HttpOnly Cookies, Next.js Middleware |
+| **Deploy** | Vercel, Railway |
 
 ---
 
@@ -90,10 +91,11 @@ Success Response (201 Created)
 ```json
 {
   "message": "User registered successfully",
-  "user": { 
+  "data": { 
     "id": "uuid", 
     "name": "Cavin Surya", 
-    "email": "cavin@example.com" 
+    "email": "cavin@example.com"
+    "createdAt": "2026-03-30T10:00:00.000Z" 
   }
 }
 ```
@@ -112,7 +114,7 @@ Success Response (200 OK)
 ```json
 {
   "message": "Login successful",
-  "user": { 
+  "data": { 
     "id": "uuid", 
     "name": "Cavin Surya", 
     "email": "cavin@example.com" 
@@ -188,14 +190,16 @@ Success Response (200 OK)
       "status": "TODO",
       "priority": "HIGH",
       "dueDate": "2026-04-12T10:00:00.000Z",
+      "userId": "uuid"
       "createdAt": "2026-03-30T10:00:00.000Z"
+      "updatedAt": "2026-03-30T10:00:00.000Z"
     }
   ]
 }
 ```
 POST /tasks [🔒 Auth Required]
 
-Membuat tugas baru.
+Membuat task baru.
 
 Keterangan Field
 status: TODO | IN_PROGRESS | DONE
@@ -222,27 +226,41 @@ Success Response (201 Created)
       "priority": "HIGH",
       "dueDate": "2026-04-12T10:00:00.000Z",
       "createdAt": "2026-03-30T10:00:00.000Z"
+      "updatedAt": "2026-03-30T10:00:00.000Z"
   }
 }
 ```
 PUT /tasks/:id [🔒 Auth Required]
 
-Memperbarui detail tugas tertentu. Misalnya ntuk update status (dari TODO ke DONE).
+Memperbarui detail tugas tertentu. Misalnya untuk update status (dari TODO ke DONE).
 
 Request Params
 id: ID dari task
 Request Body 
 ```json
 {
+  "title": "Fix Payment Integrations",
+  "description": "Resolve gateway timeout issues in prod",
   "status": "DONE",
-  "priority": "MEDIUM"
+  "priority": "HIGH",
+  "dueDate": "2026-04-15T14:00:00.000Z"
 }
 ```
 Success Response (200 OK)
 ```json
 {
   "message": "Task updated successfully",
-  "data": {}
+  "data": {
+      "id": "944ef456-44d0-485e-ba15-d2e247d68e81",
+      "title": "Fix Payment Integrations",
+      "description": "Resolve gateway timeout issues in prod",
+      "status": "DONE",
+      "priority": "HIGH",
+      "dueDate": "2026-04-15T14:00:00.000Z",
+      "userId": "40f689a0-7134-40c1-9fb3-ec8eaa9f43c1",
+      "createdAt": "2026-03-30T19:09:27.536Z",
+      "updatedAt": "2026-03-30T19:19:10.664Z"
+    }
 }
 ```
 DELETE /tasks/:id [🔒 Auth Required]
@@ -258,20 +276,67 @@ Success Response (200 OK)
 }
 ```
 
-## ⚙️ Environment Variables Setup
+## ⚙️ Panduan Instalasi & Menjalankan Aplikasi Lokal (Step-by-Step)
 
-### 📂 Backend (`/server/.env`)
-```env
-PORT=3001
-DATABASE_URL="postgresql://user:pass@localhost:5432/dbname"
-JWT_SECRET="your_secret_key"
-FRONTEND_URL="http://localhost:3000"
-NODE_ENV="development"
-```
+Panduan ini akan membantu Anda menjalankan proyek NextTask di lingkungan lokal Anda dari awal hingga akhir.
+
+### 📋 Prerequisites
+Sebelum memulai, pastikan sistem telah memiliki:
+* **Node.js** (Versi 18 atau lebih baru)
+* **Git**
+* **PostgreSQL** (Pastikan PostgreSQL sudah terinstal dan berjalan di komputer Anda, Buat database baru (misal: `nextask_db`))
 
 ---
 
-## 🚀 Rencana Pengembangan Lanjutan (Future Enhancements)
+### Langkah 1: Clone Repositori
+Karena proyek ini memisahkan Frontend dan Backend demi menjaga kebersihan arsitektur, silakan *clone* kedua repositori ke dalam satu folder kerja Anda:
+
+```bash
+# Clone Backend (Server)
+git clone https://github.com/cavinsrya/client-nextask
+
+# Clone Frontend (Client)
+git clone https://github.com/cavinsrya/server-nextask
+```
+### Langkah 2: Setup Backend (Server & Database)
+1. Instalasi Dependensi
+Buka terminal, masuk ke folder server, dan instal semua paket yang dibutuhkan:
+```bash
+cd server-nextask
+npm install
+```
+2. Konfigurasi Environment Variables (.env)
+Buat sebuah file baru bernama .env di root folder server-nextask. Anda bisa menyalin format dari file .env.example yang telah disediakan.
+
+3. Setup Database (Migrasi Prisma)
+Setelah DATABASE_URL terhubung ke PostgreSQL Anda, jalankan perintah ini untuk melakukan sinkronisasi skema dan membuat tabel secara otomatis:
+```bash
+npx prisma db push
+```
+4. Jalankan Server
+```bash
+npm run dev
+```
+### Langkah 3: Setup Frontend (Client)
+1. Instalasi Dependensi
+Buka tab terminal baru (biarkan server tetap berjalan), masuk ke folder client, dan instal paketnya:
+```bash
+cd client-nextask
+npm install
+```
+2. Konfigurasi Environment Variables (.env.local)
+Buat file baru bernama .env.local di root folder client-nextask. Anda dapat merujuk pada file .env.example yang tersedia.
+3. Jalankan Aplikasi Web
+```bash
+npm run dev
+```
+### 🎉 Langkah 4: Akses Aplikasi
+Buka browser favorit Anda dan navigasikan ke:
+http://localhost:3000
+
+---
+
+## 🚀 Future Enhancements
 
 Meskipun aplikasi ini sudah siap digunakan di tahap produksi (*production-ready*), arsitektur dasar telah dirancang agar mudah diskalakan. Berikut adalah beberapa rancangan arsitektur tingkat lanjut yang direncanakan untuk iterasi berikutnya:
 

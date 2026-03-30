@@ -16,7 +16,9 @@ export const getMyTasks = async (
     const userId = req.user!.id;
     const tasks = await getUserTasksService(userId);
 
-    res.status(200).json({ data: tasks });
+    res
+      .status(200)
+      .json({ message: "Tasks retrieved successfully", data: tasks });
   } catch (error) {
     console.error("Get Tasks Error:", error);
     res.status(500).json({ message: "Internal server error" });

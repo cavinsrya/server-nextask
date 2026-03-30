@@ -10,7 +10,7 @@ import { getMe } from "../controllers/userController.js";
 
 const router = Router();
 
-router.post("/", register);
+router.post("/register", register);
 router.post("/login", login);
 router.get("/me", authenticateToken, getMe);
 router.put("/me", authenticateToken, updateProfile);
